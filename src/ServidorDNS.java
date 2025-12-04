@@ -44,8 +44,19 @@ public class ServidorDNS {
                             break;
                         }
 
-                        if (!mensaje.startsWith("LOOKUP ")) {
-                            salida.println("400 Bad request");
+                        if (mensaje.equalsIgnoreCase("LIST")) {
+                            salida.println("150 Inicio listado");
+
+                            StringBuilder sb = new StringBuilder();
+                            for (String dominio : registros.keySet()) {
+                                for (Registro r : registros.get(dominio)) {
+                                    sb.append(r.getDominio()).append(" ").append(r.getTipo()).append(" ").append(r.getIp());
+                                }
+                            }
+
+                            salida.println(sb);
+
+                            salida.println("226 Listado finalizado");
                             continue;
                         }
 
@@ -55,6 +66,7 @@ public class ServidorDNS {
                             salida.println("400 Bad request");
                             continue;
                         }
+
 
                         String tipo = partes[1];
                         String dominio = partes[2];
